@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch:  # Allows manual triggering from the GitHub UI
 
 jobs:
   build:
@@ -17,7 +17,10 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'
+          flutter-version: 'stable'  # You can specify a specific Flutter version here if needed
+
+      - name: Verify Flutter version
+        run: flutter --version  # Debug step to check if Flutter setup is successful
 
       - name: Install dependencies
         run: flutter pub get
@@ -31,7 +34,7 @@ jobs:
       - name: Set up Firebase CLI
         run: |
           curl -sL https://firebase.tools | bash
-          firebase --version
+          firebase --version  # Ensures the Firebase CLI is properly installed
 
       - name: Authenticate Firebase
         run: echo "${{ secrets.FIREBASE_SECRET }}" > ${HOME}/firebase-key.json
