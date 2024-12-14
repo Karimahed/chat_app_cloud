@@ -17,7 +17,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 'stable'  # You can specify a specific Flutter version here if needed
+          flutter-version: '3.10.0'  # You can specify a specific Flutter version here if needed
 
       - name: Verify Flutter version
         run: flutter --version  # Debug step to check if Flutter setup is successful
