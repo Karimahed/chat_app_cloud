@@ -1,0 +1,44 @@
+name: CI/CD Pipeline with Firebase App Distribution
+
+on:
+  push:
+    branches:
+      - main # Trigger pipeline on push to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test # Optional: Add your test commands here
+
+      - name: Build APK (for Android)
+        run: flutter build apk --release
+
+      - name: Set up Firebase CLI
+        run: |
+          curl -sL https://firebase.tools | bash
+          firebase --version
+
+      - name: Authenticate Firebase
+        run: echo "${{ secrets.FIREBASE_SECRET }}" > ${HOME}/firebase-key.json
+        env:
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+
+      - name: Deploy to Firebase App Distribution (Android)
+        run: |
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app <your_firebase_app_id> --groups <testers_group> --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
+        env:
+          FIREBASE_AUTH_TOKEN: ${{ secrets.FIREBASE_AUTH_TOKEN }}
