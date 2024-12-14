@@ -3,8 +3,8 @@ name: CI/CD Pipeline with Firebase App Distribution
 on:
   push:
     branches:
-      - main # Trigger pipeline on push to the main branch
-    workflow_dispatch:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
