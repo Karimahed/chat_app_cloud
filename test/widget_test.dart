@@ -4,25 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-// Mock class for Firebase initialization
-class MockFirebaseApp extends Mock implements FirebaseApp {}
+// Mocking the Firebase initialization process
+class MockFirebaseCore extends Mock implements FirebaseApp {}
 
 void main() {
-  // Set up Firebase for testing
+  // Ensure Firebase is initialized for tests
   setUpAll(() async {
-    // Ensure Firebase is initialized in the test environment
+    // Initialize the Firebase mock or mock the initialization process
     WidgetsFlutterBinding.ensureInitialized();
 
-    // Mock Firebase initialization
-    await Firebase.initializeApp(options: FirebaseOptions(
-      apiKey: 'your-api-key',
-      appId: 'your-app-id',
-      messagingSenderId: 'your-sender-id',
-      projectId: 'your-project-id',
-      storageBucket: 'your-storage-bucket',
-      authDomain: 'your-auth-domain',
-      measurementId: 'your-measurement-id',
-    ));
+    // Bypass the actual initialization process with mocked data
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: 'your-api-key',  // Replace with your actual mock data
+        appId: 'your-app-id',
+        messagingSenderId: 'your-sender-id',
+        projectId: 'your-project-id',
+        storageBucket: 'your-storage-bucket',
+        authDomain: 'your-auth-domain',
+        measurementId: 'your-measurement-id',
+      ),
+    );
   });
 
   group('AuthScreen Tests', () {
@@ -35,11 +37,11 @@ void main() {
         ),
       );
 
-      // Find the Sign In button by Key and tap it
+      // Find the Sign In button and tap it
       await tester.tap(find.byKey(const Key('signInButton')));
       await tester.pump();
 
-      // Verify the sign-in function was triggered
+      // Verify that the sign-in function was triggered
       expect(signInTapped, isTrue);
     });
 
