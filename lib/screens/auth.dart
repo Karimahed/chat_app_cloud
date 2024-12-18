@@ -223,6 +223,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           Padding(
                             padding: const EdgeInsets.only(right: 25),
                             child: ElevatedButton(
+                              key: const Key('verifyPhoneButton'),
                               onPressed: sendOtp,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Theme.of(context).colorScheme.primary,
@@ -247,11 +248,13 @@ class _AuthScreenState extends State<AuthScreen> {
                   const SizedBox(height: 15),
                   MyButton(
                       onTap: _isPhoneLogin ? verifyOtp : signUserIn,
-                      buttonText: "Sign In"
+                      buttonText: "Sign In",
+                      key: const Key('signInButton')
                   ),
                   const SizedBox(height: 15),
                   TextButton(
-                    onPressed: () async {
+                      key: const Key('toggleLoginMethodButton'),
+                      onPressed: () async {
                       setState(() {
                         _isPhoneLogin = !_isPhoneLogin;
                       });
@@ -297,6 +300,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SquareTile(
+                        key: const Key('googleSignInButton'),
                         onTap: () async {
                           try {
                             final userCredential = await _authService.signInWithGoogle();
