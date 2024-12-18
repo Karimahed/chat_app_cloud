@@ -37,12 +37,12 @@ jobs:
           firebase --version  # Verify the Firebase CLI version
 
       - name: Authenticate Firebase
-        run: echo "${{ secrets.FIREBASE_SECRET }}" > ${HOME}/firebase-key.json  # Store Firebase secret in a json file
+        run: echo "${{ secrets.FIREBASE_AUTH_TOKEN }}" > ${HOME}/firebase-key.json  # Store Firebase secret in a json file
         env:
-          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}  # Use Firebase service account secret from GitHub Secrets
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_AUTH_TOKEN }}  # Use Firebase service account secret from GitHub Secrets
 
       - name: Deploy to Firebase App Distribution (Android)
         run: |
-          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app ${{ secrets.FIREBASE_APP_ID }} --groups ${{ secrets.FIREBASE_TESTERS_GROUP }} --token ${{ secrets.FIREBASE_AUTH_TOKEN }}  # Deploy to Firebase App Distribution
+          firebase appdistribution:distribute app-release.apk --app 1:808957447622:android:0c4735f778774b030df6c7 --groups chatApp --token ${{ secrets.FIREBASE_AUTH_TOKEN }}  # Deploy to Firebase App Distribution
         env:
           FIREBASE_AUTH_TOKEN: ${{ secrets.FIREBASE_AUTH_TOKEN }}  # Use Firebase authentication token from GitHub Secrets

@@ -329,6 +329,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       const SizedBox(width: 4),
                       GestureDetector(
+                        key: const Key('signUpButton'),
                         onTap: () {
                           Navigator.push(
                             context,
