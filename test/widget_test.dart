@@ -1,104 +1,90 @@
+import 'package:chat_app/screens/auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:chat_app/screens/auth.dart';  // Import your AuthScreen
-import 'package:chat_app/services/auth_service.dart';
+import 'package:mockito/mockito.dart';
+
+// Mock class for Firebase initialization
+class MockFirebaseApp extends Mock implements FirebaseApp {}
 
 void main() {
-  // Initialize Firebase before running the tests
+  // Set up Firebase for testing
   setUpAll(() async {
-    await Firebase.initializeApp();
+    // Ensure Firebase is initialized in the test environment
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Mock Firebase initialization
+    await Firebase.initializeApp(options: FirebaseOptions(
+      apiKey: 'your-api-key',
+      appId: 'your-app-id',
+      messagingSenderId: 'your-sender-id',
+      projectId: 'your-project-id',
+      storageBucket: 'your-storage-bucket',
+      authDomain: 'your-auth-domain',
+      measurementId: 'your-measurement-id',
+    ));
   });
 
-  group('AuthenticationPage Tests', () {
-    testWidgets('Sign Up button is tappable', (WidgetTester tester) async {
-      bool signUpTapped = false;
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ElevatedButton(
-              key: const Key('signUpButton'),
-              onPressed: () {
-                signUpTapped = true;
-              },
-              child: const Text('Sign Up'),
-            ),
-          ),
-        ),
-      );
-
-      // Tap the Sign Up button
-      await tester.tap(find.byKey(const Key('signUpButton')));
-      await tester.pump();
-
-      // Verify the function was triggered
-      expect(signUpTapped, isTrue);
-    });
-
-    testWidgets('Sign In button is tappable', (WidgetTester tester) async {
+  group('AuthScreen Tests', () {
+    testWidgets('Sign In button is tappable and triggers sign-in function', (WidgetTester tester) async {
       bool signInTapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ElevatedButton(
-              key: const Key('signInButton'),
-              onPressed: () {
-                signInTapped = true;
-              },
-              child: const Text('Sign In'),
-            ),
-          ),
+          home: AuthScreen(),
         ),
       );
 
-      // Tap the Sign In button
+      // Find the Sign In button by Key and tap it
       await tester.tap(find.byKey(const Key('signInButton')));
       await tester.pump();
 
-      // Verify the function was triggered
+      // Verify the sign-in function was triggered
       expect(signInTapped, isTrue);
     });
 
-    testWidgets('Verify Phone button is tappable', (WidgetTester tester) async {
+    testWidgets('Sign Up button navigates to registration screen', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: AuthScreen(),
+        ),
+      );
+
+      // Find the "Register now" button and tap it
+      await tester.tap(find.text('Register now'));
+      await tester.pumpAndSettle();
+
+      // Verify that the registration screen is displayed
+      expect(find.text('Sign Up'), findsOneWidget);  // Assuming 'Sign Up' is part of the Registration screen
+    });
+
+    testWidgets('Verify Phone button is tappable and triggers phone verification', (WidgetTester tester) async {
       bool phoneVerifyTapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ElevatedButton(
-              key: const Key('verifyPhoneButton'),
-              onPressed: () {
-                phoneVerifyTapped = true;
-              },
-              child: const Text('Verify Phone'),
-            ),
-          ),
+          home: AuthScreen(),
         ),
       );
 
-      // Tap the Verify Phone button
+      // Switch to Phone login view by tapping the toggle text
+      await tester.tap(find.text('Login with Phone Number?'));
+      await tester.pumpAndSettle();
+
+      // Tap the "Send OTP" button to trigger phone verification
       await tester.tap(find.byKey(const Key('verifyPhoneButton')));
       await tester.pump();
 
-      // Verify the function was triggered
+      // Verify the phone verification function was triggered
       expect(phoneVerifyTapped, isTrue);
     });
 
-    testWidgets('Google Sign In button is tappable', (WidgetTester tester) async {
+    testWidgets('Google Sign In button is tappable and triggers Google login', (WidgetTester tester) async {
       bool googleSignInTapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ElevatedButton(
-              key: const Key('googleSignInButton'),
-              onPressed: () {
-                googleSignInTapped = true;
-              },
-              child: const Text('Sign In with Google'),
-            ),
-          ),
+          home: AuthScreen(),
         ),
       );
 
@@ -106,7 +92,7 @@ void main() {
       await tester.tap(find.byKey(const Key('googleSignInButton')));
       await tester.pump();
 
-      // Verify the function was triggered
+      // Verify that Google sign-in was triggered
       expect(googleSignInTapped, isTrue);
     });
   });
