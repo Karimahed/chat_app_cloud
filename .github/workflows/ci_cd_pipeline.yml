@@ -3,46 +3,46 @@ name: CI/CD Pipeline with Firebase App Distribution
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main  # Trigger this workflow on push to main branch
+  workflow_dispatch:  # Allows manual trigger of the workflow
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Run the job on the latest Ubuntu runner
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Checkout the repository code
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.5'
+          flutter-version: '3.24.5'  # Set the Flutter version
 
       - name: Verify Flutter version
-        run: flutter --version
+        run: flutter --version  # Check Flutter version to verify setup
 
       - name: Install dependencies
-        run: flutter pub get
+        run: flutter pub get  # Install Flutter dependencies
 
       - name: Run tests
-        run: flutter test # Optional: Add your test commands here
+        run: flutter test  # Run unit tests (optional but recommended)
 
       - name: Build APK (for Android)
-        run: flutter build apk --release
+        run: flutter build apk --release  # Build the release APK
 
       - name: Set up Firebase CLI
         run: |
-          curl -sL https://firebase.tools | bash
-          firebase --version
+          curl -sL https://firebase.tools | bash  # Install Firebase CLI
+          firebase --version  # Verify the Firebase CLI version
 
       - name: Authenticate Firebase
-        run: echo "${{ secrets.FIREBASE_SECRET }}" > ${HOME}/firebase-key.json
+        run: echo "${{ secrets.FIREBASE_SECRET }}" > ${HOME}/firebase-key.json  # Store Firebase secret in a json file
         env:
-          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+          FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}  # Use Firebase service account secret from GitHub Secrets
 
       - name: Deploy to Firebase App Distribution (Android)
         run: |
-          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app <your_firebase_app_id> --groups <testers_group> --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk --app ${{ secrets.FIREBASE_APP_ID }} --groups ${{ secrets.FIREBASE_TESTERS_GROUP }} --token ${{ secrets.FIREBASE_AUTH_TOKEN }}  # Deploy to Firebase App Distribution
         env:
-          FIREBASE_AUTH_TOKEN: ${{ secrets.FIREBASE_AUTH_TOKEN }}
+          FIREBASE_AUTH_TOKEN: ${{ secrets.FIREBASE_AUTH_TOKEN }}  # Use Firebase authentication token from GitHub Secrets
